@@ -17,5 +17,4 @@ test("has input", async ({ page }) => {
   await button.click()
 
   expect(store.todos.length).toEqual(4)
-
 })

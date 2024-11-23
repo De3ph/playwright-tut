@@ -43,15 +43,26 @@ class TodoStore {
       )
     })
   ]
+
   constructor() {
     makeAutoObservable(this)
   }
 
-  setNewTask = (newTask) => {
-    this.newTask = newTask
+  /**
+   *
+   * @param {Event} e
+   */
+  setNewTask = (e) => {
+    e.preventDefault()
+    this.newTask = e.target.value
   }
+  /**
+   *
+   * @param {Event} e
+   */
+  addTodo = (e) => {
+    e.preventDefault()
 
-  addTodo = () => {
     if (this.newTask.trim() === "") {
       return
     }
@@ -64,7 +75,6 @@ class TodoStore {
       completed: false
     })
     this.setNewTask("")
-    console.log("🚀 ~ TodoStore ~ this._todos:", this._todos)
   }
 
   toggleTodo(id) {

@@ -6,28 +6,22 @@ import {
 } from "@tanstack/react-table"
 import { observer } from "mobx-react-lite"
 
-import { toJS } from "mobx"
 import store from "./store"
 
 const App = observer(() => {
   const { newTask, setNewTask, addTodo } = store
-
-  const createTodo = (e) => {
-    e.preventDefault()
-    addTodo()
-  }
 
   return (
     <div className='min-h-screen bg-gray-100 py-8'>
       <div className='max-w-4xl mx-auto px-4'>
         <h1 className='text-3xl font-bold text-gray-800 mb-8'>Todo List</h1>
 
-        <form onSubmit={createTodo} className='mb-8 flex gap-4'>
+        <form onSubmit={addTodo} className='mb-8 flex gap-4'>
           <input
             data-testid='input'
             type='text'
             value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
+            onChange={setNewTask}
             placeholder='Enter new task...'
             className='flex-1 px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
           />
@@ -48,7 +42,7 @@ const App = observer(() => {
 
 const Table = observer(({ store: { todos, columns } }) => {
   const table = useReactTable({
-    data: toJS(todos),
+    data: todos,
     columns,
     getCoreRowModel: getCoreRowModel()
   })
@@ -77,21 +71,27 @@ const Table = observer(({ store: { todos, columns } }) => {
         </thead>
         <tbody className='bg-white divide-y divide-gray-200'>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
+            <TableRow row={row} />
           ))}
         </tbody>
       </table>
     </div>
   )
 })
+
+const TableRow = ({ row }) => {
+  return (
+    <tr key={row.id} className={row.original?.completed ? "bg-green-100" : ""}>
+      {row.getVisibleCells().map((cell) => (
+        <td
+          key={cell.id}
+          className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      ))}
+    </tr>
+  )
+}
 
 export default App
