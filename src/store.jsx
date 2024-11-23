@@ -1,70 +1,68 @@
-import { createColumnHelper } from "@tanstack/react-table"
-import { makeAutoObservable, toJS } from "mobx"
+import { createColumnHelper } from "@tanstack/react-table";
+import { makeAutoObservable, toJS } from "mobx";
 
 class TodoStore {
   _todos = [
     { id: 1, task: "Learn React", completed: false },
     { id: 2, task: "Build Todo App", completed: true },
-    { id: 3, task: "Master TanStack Table", completed: false }
-  ]
-  columnHelper = createColumnHelper()
-  newTask = ""
+    { id: 3, task: "Master TanStack Table", completed: false },
+  ];
+  columnHelper = createColumnHelper();
+  newTask = "";
 
   columns = [
     this.columnHelper.accessor("id", {
       header: "ID",
-      cell: (info) => info.getValue()
+      cell: (info) => info.getValue(),
     }),
     this.columnHelper.accessor("task", {
       header: "Task",
-      cell: (info) => info.getValue()
+      cell: (info) => info.getValue(),
     }),
     this.columnHelper.accessor("completed", {
       header: "Status",
-      cell: (info) => (info.getValue() ? "Completed" : "Pending")
+      cell: (info) => (info.getValue() ? "Completed" : "Pending"),
     }),
     this.columnHelper.accessor("actions", {
       header: "Actions",
       cell: ({ row }) => (
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <button
             onClick={() => this.toggleTodo(row.original.id)}
-            className='px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600'
+            className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Toggle
           </button>
           <button
             onClick={() => this.deleteTodo(row.original.id)}
-            className='px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600'
+            className="px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
           >
             Delete
           </button>
         </div>
-      )
-    })
-  ]
+      ),
+    }),
+  ];
 
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this);
   }
 
   /**
-   *
    * @param {Event} e
    */
   setNewTask = (e) => {
-    e.preventDefault()
-    this.newTask = e.target.value
-  }
+    e.preventDefault();
+    this.newTask = e.target.value;
+  };
   /**
-   *
    * @param {Event} e
    */
   addTodo = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (this.newTask.trim() === "") {
-      return
+      return;
     }
 
     this._todos.push({
@@ -72,24 +70,24 @@ class TodoStore {
         ? Math.max(...this._todos.map((t) => t.id)) + 1
         : 1,
       task: this.newTask,
-      completed: false
-    })
-    this.setNewTask("")
-  }
+      completed: false,
+    });
+    this.setNewTask("");
+  };
 
   toggleTodo(id) {
     this._todos = this._todos.map((todo) =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    )
+    );
   }
 
   deleteTodo(id) {
-    this._todos = this._todos.filter((todo) => todo.id !== id)
+    this._todos = this._todos.filter((todo) => todo.id !== id);
   }
 
   get todos() {
-    return toJS(this._todos)
+    return toJS(this._todos);
   }
 }
 
-export default new TodoStore()
+export default new TodoStore();
